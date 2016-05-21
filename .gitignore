@@ -1,3 +1,9 @@
+# other generated files
+*.map
+
+# temp files
+*.sw[po]
+
 # Object files
 *.o
 *.ko
