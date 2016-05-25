@@ -40,7 +40,7 @@
 
 
 # MCU name
-MCU = atmega16
+MCU = atmega32
 
 
 # Processor frequency.
@@ -48,7 +48,7 @@ MCU = atmega16
 #     processor frequency. You can then use this symbol in your source code to 
 #     calculate timings. Do NOT tack on a 'UL' at the end, this will be done
 #     automatically to create a 32-bit value in your source code.
-F_CPU = 14745600
+F_CPU = 16000000
 
 
 # Output format. (can be srec, ihex, binary)
@@ -76,7 +76,7 @@ ASRC =
 # Optimization level, can be [0, 1, 2, 3, s]. 
 #     0 = turn off optimization. s = optimize for size.
 #     (Note: 3 is not always the best optimization level. See avr-libc FAQ.)
-OPT = s
+OPT = 0
 
 
 # Debugging format.
