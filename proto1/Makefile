@@ -10,7 +10,7 @@
 # Compiler settings
 CC = avr-gcc
 OBJCOPY = avr-objcopy
-OPT = s
+OPT = 0
 
 TARGET = main
 SOURCES = $(wildcard src/*.c)
@@ -19,19 +19,28 @@ HEADERS = inc/*.h
 
 # MCU settings
 MCU = atmega32
-F_CPU = 16000000UL
-BAUD = 9600UL
-AVRDUDE_PORT = /dev/ttyUSB1
+F_CPU = 16000000
+BAUD = 9600
+
+# AVRDUDE Settings
+AVRDUDE_FLAGS = -qV \
+		-c dragon_jtag \
+		-p m32
 
 
 # Used implicitly
 TARGET_ARCH = -mmcu=$(MCU)
 CPPFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -I.
 
+# Detail:
+#  -Wall show all warnings
+#  -Wextra show even more warnings
+#  -Werror all warnings are errors
+#  -Wno-cpp exclude #warning statments
+
 CFLAGS = -g -Wall -std=gnu99 -O$(OPT) \
 		 -ffunction-sections -fdata-sections \
-		 -Werror
-
+		 -Werror -Wextra -Wno-cpp
 
 LDFLAGS = -Wl,-Map,$(TARGET).map -Wl,--gc-sections
 
@@ -40,8 +49,17 @@ LDFLAGS = -Wl,-Map,$(TARGET).map -Wl,--gc-sections
 ## Targets and rules
 all: flash
 
+proto: $(TARGET).hex
+	:
+
 flash: $(TARGET).hex
-	avrdude -eqV -c stk500 -p m32 -U flash:w:$< -P $(AVRDUDE_PORT)
+	avrdude -e $(AVRDUDE_FLAGS) -U flash:w:$<
+reset:
+	avrdude $(AVRDUDE_FLAGS)
+erase:
+	avrdude -e $(AVRDUDE_FLAGS)
+
+
 
 %.hex: %.elf
 	     $(OBJCOPY) -j .text -j .data -O ihex $< $@
@@ -51,8 +69,3 @@ flash: $(TARGET).hex
 
 clean:
 	    rm -f $(TARGET).elf $(TARGET).hex $(TARGET).map
-
-reset:
-	avrdude -qV -c stk500 -p m32 -P $(AVRDUDE_PORT)
-erase:
-	avrdude -eqV -c stk500 -p m32 -P $(AVRDUDE_PORT)
