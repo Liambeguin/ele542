@@ -17,10 +17,10 @@
 #define EXIT_FAILURE 1
 
 #ifndef F_CPU
-	#define F_CPU 16000000UL // 16.000 MHz
+	#define F_CPU 16000000 // 16.000 MHz
 #endif /* F_CPU */
 #ifndef BAUD
-	#define BAUD 9600UL
+	#define BAUD 9600
 #endif /* BAUD */
 
 /* LEDs */

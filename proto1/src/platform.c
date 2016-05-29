@@ -4,15 +4,19 @@
 
 
 
-uint8_t platform_init(void){
+uint8_t platform_init(void) {
 	/* Disable interrupts */
+	cli();
 
 	/* Init */
-	/* led_init(); */
+
+	DDRB = 0xff;
+	PORTB = ~(0x00);
+
 	uart_init(UART_BAUDRATE_9600);
 
 	/* Enable interrupts */
-	/* sei(); */
+	sei();
 
 	return EXIT_SUCCESS;
 }
