@@ -21,6 +21,7 @@ HEADERS = inc/*.h
 MCU = atmega32
 F_CPU = 16000000
 BAUD = 9600
+SERIAL_PORT = /dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller-if00-port0
 
 # AVRDUDE Settings
 AVRDUDE_FLAGS = -qV \
@@ -58,6 +59,8 @@ reset:
 	avrdude $(AVRDUDE_FLAGS)
 erase:
 	avrdude -e $(AVRDUDE_FLAGS)
+serial:
+	picocom -b $(BAUD) $(SERIAL_PORT)
 
 
 
