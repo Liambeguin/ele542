@@ -2,6 +2,7 @@
 #include "inc/platform.h"
 #include "inc/uart.h"
 #include "inc/gpio.h"
+#include "inc/timer.h"
 
 
 void leds_on(uint8_t leds) {
@@ -30,6 +31,7 @@ uint8_t platform_init(void) {
 	/* Init */
 	platform_leds_init();
 	uart_init(UART_BAUDRATE_9600);
+	timer1_init();
 
 	/* Enable interrupts */
 	sei();

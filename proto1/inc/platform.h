@@ -33,6 +33,7 @@
 #define LED_5 ((uint8_t)(1 << 5))
 #define LED_6 ((uint8_t)(1 << 6))
 #define LED_7 ((uint8_t)(1 << 7))
+
 #define LED_HEARTBEAT     LED_0
 #define LED_CMD_RECV      LED_1
 #define LED_SONAR_R_OBST  LED_2
@@ -42,12 +43,16 @@
 #define LED_ROBOT_IDLE    LED_6
 #define LED_ROBOT_ACTIVE  LED_7
 
+/* Timer */
+#define PIN_TIM1_CHA ((uint8_t)(1 << 5))
+#define PIN_TIM1_CHB ((uint8_t)(1 << 4))
 
 /* UART */
 #define UART_BAUDRATE_9600 103 // see datasheet p166 for details
 
 /* prototypes */
 uint8_t platform_init(void);
+
 void leds_on(uint8_t leds);
 void leds_off(uint8_t leds);
 void leds_toggle(uint8_t leds);
