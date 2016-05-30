@@ -2,6 +2,17 @@
 #include "inc/timer.h"
 #include "inc/gpio.h"
 
+#include "inc/uart.h"
+
+static uint16_t OCR1A_value = 0x0000;
+static uint16_t OCR1B_value = 0x0000;
+
+
+void timer1_update_channel_compare(uint16_t ch_a, uint16_t ch_b) {
+	OCR1A_value = ch_a;
+	OCR1B_value = ch_b;
+}
+
 /* Datasheeet: Timer1 detailed on Page 84 */
 void timer1_init(void) {
 
@@ -21,11 +32,11 @@ void timer1_init(void) {
 	/* Timer1 Channel A ouputs on PD5 and Channel B on PD4 */
 	gpio_set_output(GPIO_PORT_D, (PIN_TIM1_CHA | PIN_TIM1_CHB) );
 
-	OCR1A = 0;
-	OCR1B = 0;
+	timer1_update_channel_compare(0, 0);
 }
 
 
 ISR(TIMER1_OVF_vect) {
-	leds_toggle(LED_4);
+	OCR1A = OCR1A_value;
+	OCR1B = OCR1B_value;
 }
