@@ -31,7 +31,7 @@ void gpio_pin_set(gpio_port_t port, uint8_t gpio_mask);
 void gpio_pin_clear(gpio_port_t port, uint8_t gpio_mask);
 void gpio_pin_toggle(gpio_port_t port, uint8_t gpio_mask);
 uint8_t gpio_port_read(gpio_port_t port);
-// inline uint8_t gpio_pin_read(gpio_port_t port, uint8_t pin);
+uint8_t gpio_pin_read(gpio_port_t port, uint8_t pin);
 
 
 #endif /* GPIO_H_ */
