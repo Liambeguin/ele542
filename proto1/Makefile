@@ -60,7 +60,7 @@ reset:
 erase:
 	avrdude -e $(AVRDUDE_FLAGS)
 serial:
-	picocom -b $(BAUD) $(SERIAL_PORT)
+	picocom --omap crcrlf -b $(BAUD) $(SERIAL_PORT)
 
 
 
