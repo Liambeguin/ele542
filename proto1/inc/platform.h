@@ -33,7 +33,15 @@
 #define LED_5 ((uint8_t)(1 << 5))
 #define LED_6 ((uint8_t)(1 << 6))
 #define LED_7 ((uint8_t)(1 << 7))
-#define LED_UART_RX LED_1
+#define LED_HEARTBEAT     LED_0
+#define LED_CMD_RECV      LED_1
+#define LED_SONAR_R_OBST  LED_2
+#define LED_SONAR_R_PING  LED_3
+#define LED_SONAR_L_OBST  LED_4
+#define LED_SONAR_L_PING  LED_5
+#define LED_ROBOT_IDLE    LED_6
+#define LED_ROBOT_ACTIVE  LED_7
+
 
 /* UART */
 #define UART_BAUDRATE_9600 103 // see datasheet p166 for details

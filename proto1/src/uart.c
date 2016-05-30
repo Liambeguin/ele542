@@ -31,11 +31,14 @@ void uart_send_byte (uint8_t data) {
 	while (!(UCSRA &  (1<<UDRE)) );
 	UDR = data;
 }
+
 void uart_send (uint8_t* data, uint8_t size) {
+
 	register uint8_t i = 0;
 	for (i = 0; i < size; i++) {
 		if (uart_buffer.isFull)
 			return;
+
 		cb_write(&uart_buffer, &data[i]);
 	}
 }
@@ -44,21 +47,14 @@ void uart_send (uint8_t* data, uint8_t size) {
 /* Interrupt when transmission is complete */
 ISR(USART_TXC_vect) {
 	uint8_t byte = 0;
-
 	while (!(UCSRA &  (1<<UDRE)) );
-
-	PORTB &= ~LED_UART_RX;
 	cb_read(&uart_buffer, &byte);
 	UDR = byte;
 }
 
-
-
 ISR(USART_RXC_vect) {
 
 	uint8_t byte = UDR;
-	PORTB |= ~LED_UART_RX;
 	cb_write(&uart_buffer, &byte);
-	/* uart_send_byte(byte); */
 }
 
