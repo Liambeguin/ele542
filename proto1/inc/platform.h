@@ -23,6 +23,7 @@
 	#define BAUD 9600
 #endif /* BAUD */
 
+
 /* LEDs */
 #define LED_0 ((uint8_t)(1 << 0))
 #define LED_1 ((uint8_t)(1 << 1))
@@ -32,12 +33,17 @@
 #define LED_5 ((uint8_t)(1 << 5))
 #define LED_6 ((uint8_t)(1 << 6))
 #define LED_7 ((uint8_t)(1 << 7))
+#define LED_UART_RX LED_1
 
 /* UART */
 #define UART_BAUDRATE_9600 103 // see datasheet p166 for details
 
 /* prototypes */
 uint8_t platform_init(void);
+void leds_on(uint8_t leds);
+void leds_off(uint8_t leds);
+void leds_toggle(uint8_t leds);
+
 
 #endif /* _PLATFORM_H_ */
 /* vim: set cc=80 : */
