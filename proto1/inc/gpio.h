@@ -25,11 +25,14 @@ enum {
 };
 
 
-uint8_t gpio_set_input(gpio_port_t port, uint8_t gpio_mask);
-uint8_t gpio_set_output(gpio_port_t port, uint8_t gpio_mask);
+void gpio_set_input(gpio_port_t port, uint8_t gpio_mask);
+void gpio_set_output(gpio_port_t port, uint8_t gpio_mask);
+
 void gpio_pin_set(gpio_port_t port, uint8_t gpio_mask);
 void gpio_pin_clear(gpio_port_t port, uint8_t gpio_mask);
 void gpio_pin_toggle(gpio_port_t port, uint8_t gpio_mask);
+void gpio_port_set(gpio_port_t port, uint8_t value);
+
 uint8_t gpio_port_read(gpio_port_t port);
 uint8_t gpio_pin_read(gpio_port_t port, uint8_t pin);
 
