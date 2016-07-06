@@ -59,7 +59,7 @@
 #if (LOG_LEVEL == 1)
 	#define DEBUG(...) \
 	do{ printf(" * in %s() : ",__FUNCTION__); \
-		printf(__VA_ARGS__);} while(0);
+		printf(__VA_ARGS__); printf("\n");} while(0);
 #else
 	#define DEBUG(...) (void)(__VA_ARGS__)
 #endif
