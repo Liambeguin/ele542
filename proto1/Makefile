@@ -57,7 +57,7 @@ reset:
 erase:
 	avarice $(AVARICE_FLAGS) --erase
 serial:
-	picocom --omap crcrlf -b $(BAUD) $(SERIAL_PORT)
+	picocom --imap lfcrlf -b $(BAUD) $(SERIAL_PORT)
 
 
 
