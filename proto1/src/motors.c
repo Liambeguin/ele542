@@ -44,10 +44,10 @@ uint8_t motors_calibration(void) {
 	motor_set_direction(ARRIERE, ARRIERE);
 	adc_get_averaged_values(&motor_cal_g.Vmax_m, &motor_cal_d.Vmax_m);
 
-	DEBUG("max_p  G: %d     D: %d \n", (int)(motor_cal_g.Vmax_p*1000), (int)(motor_cal_d.Vmax_p*1000));
-	DEBUG("zero_p G: %d     D: %d \n", (int)(motor_cal_g.Vzero_p*1000), (int)(motor_cal_d.Vzero_p*1000));
-	DEBUG("zero_m G: %d     D: %d \n", (int)(motor_cal_g.Vzero_m*1000), (int)(motor_cal_d.Vzero_m*1000));
-	DEBUG("max_m  G: %d     D: %d \n", (int)(motor_cal_g.Vmax_m*1000), (int)(motor_cal_d.Vmax_m*1000));
+	/* DEBUG("max_p  G: %d     D: %d", (int)(motor_cal_g.Vmax_p*1000), (int)(motor_cal_d.Vmax_p*1000)); */
+	/* DEBUG("zero_p G: %d     D: %d", (int)(motor_cal_g.Vzero_p*1000), (int)(motor_cal_d.Vzero_p*1000)); */
+	/* DEBUG("zero_m G: %d     D: %d", (int)(motor_cal_g.Vzero_m*1000), (int)(motor_cal_d.Vzero_m*1000)); */
+	/* DEBUG("max_m  G: %d     D: %d", (int)(motor_cal_g.Vmax_m*1000), (int)(motor_cal_d.Vmax_m*1000)); */
 
 	return EXIT_SUCCESS;
 }
