@@ -7,6 +7,7 @@
 
 /* Global inclusions */
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -49,6 +50,19 @@
 
 /* UART */
 #define UART_BAUDRATE_9600 103 // see datasheet p166 for details
+
+/* ADC */
+#define MOTEUR_G 0
+#define MOTEUR_D 1
+
+#define LOG_LEVEL 1
+#if (LOG_LEVEL == 1)
+	#define DEBUG(...) \
+	do{ printf(" * in %s() : ",__FUNCTION__); \
+		printf(__VA_ARGS__);} while(0);
+#else
+	#define DEBUG(...) (void)(__VA_ARGS__)
+#endif
 
 /* prototypes */
 uint8_t platform_init(void);

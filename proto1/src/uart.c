@@ -1,6 +1,8 @@
 #include "inc/platform.h"
 #include "inc/circular_buff.h"
 
+#define UNUSED(x) (void)(x)
+
 /* Private uart buffer */
 circular_buff_t uart_buffer = {0};
 
@@ -26,6 +28,13 @@ uint8_t uart_init(uint8_t baudrate) {
 	return EXIT_SUCCESS;
 }
 
+
+int printCHAR(char character, FILE *stream) {
+	UNUSED(stream);
+	while (!(UCSRA &  (1<<UDRE)) );
+	UDR = character;
+	return 0;
+}
 
 void uart_send_byte (uint8_t data) {
 	while (!(UCSRA &  (1<<UDRE)) );

@@ -1,8 +1,9 @@
-
 #include "inc/platform.h"
+#include "inc/motors.h"
+#include "inc/timer.h"
 #include "inc/uart.h"
 #include "inc/gpio.h"
-#include "inc/timer.h"
+#include "inc/adc.h"
 
 
 void leds_on(uint8_t leds) {
@@ -32,6 +33,8 @@ uint8_t platform_init(void) {
 	platform_leds_init();
 	uart_init(UART_BAUDRATE_9600);
 	timer1_init();
+	adc_init();
+	motors_init();
 
 	/* Enable interrupts */
 	sei();
