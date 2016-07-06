@@ -7,8 +7,11 @@
 #include "inc/timer.h"
 #include "inc/uart.h"
 #include "inc/adc.h"
+#include "inc/twi.h"
 
 int main(void) {
+
+	uint8_t foo = 0;
 
 	platform_init();
 
@@ -23,10 +26,14 @@ int main(void) {
 	while(1){
 
 		leds_toggle(LED_0);
-		timer1_update_channel_compare(0, 0);
 		_delay_ms(1000);
-		timer1_update_channel_compare(1000, 0);
-		_delay_ms(1000);
+
+		twi_read(SONAR_GAUCHE, REG_MSB, &foo);
+		DEBUG("%d", foo);
+		twi_read(SONAR_DROIT, REG_GAIN, &foo);
+		DEBUG("%d", foo);
+		twi_read(SONAR_DROIT, REG_PORTEE, &foo);
+		DEBUG("%d", foo);
 	}
 
 	return EXIT_FAILURE;

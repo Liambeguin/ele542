@@ -4,6 +4,7 @@
 #include "inc/uart.h"
 #include "inc/gpio.h"
 #include "inc/adc.h"
+#include "inc/twi.h"
 
 
 void leds_on(uint8_t leds) {
@@ -35,6 +36,8 @@ uint8_t platform_init(void) {
 	timer1_init();
 	adc_init();
 	motors_init();
+	twi_init();
+	sonar_init();
 
 	/* Enable interrupts */
 	sei();
