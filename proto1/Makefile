@@ -23,11 +23,8 @@ F_CPU = 16000000
 BAUD = 9600
 SERIAL_PORT = /dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller-if00-port0
 
-# AVRDUDE Settings
-AVRDUDE_FLAGS = -qV \
-		-c dragon_jtag \
-		-p m32
-
+# AVARICE Settings
+AVARICE_FLAGS = -g -j usb
 
 # Used implicitly
 TARGET_ARCH = -mmcu=$(MCU)
@@ -54,11 +51,11 @@ proto: $(TARGET).hex
 	:
 
 flash: $(TARGET).hex
-	avrdude -e $(AVRDUDE_FLAGS) -U flash:w:$<
+	avarice $(AVARICE_FLAGS) --erase --program --file $<
 reset:
-	avrdude $(AVRDUDE_FLAGS)
+	avarice $(AVARICE_FLAGS)
 erase:
-	avrdude -e $(AVRDUDE_FLAGS)
+	avarice $(AVARICE_FLAGS) --erase
 serial:
 	picocom --omap crcrlf -b $(BAUD) $(SERIAL_PORT)
 
