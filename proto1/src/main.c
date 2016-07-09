@@ -22,6 +22,7 @@ int main(void) {
 	printf("\nInit Done!\n");
 
 	motors_calibration();
+	sonar_init();
 
 	while(1){
 

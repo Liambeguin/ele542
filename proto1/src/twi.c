@@ -88,7 +88,7 @@ ISR(TWI_vect) {
 		case 0x08: /* Start Condition */
 		case 0x10: /* Restart Condition */
 			TWDR = transfer_addr;
-			twi_transfer_start();
+			twi_transfer_continue();
 			break;
 		case 0x18: /* Address Write Ack */
 		case 0x28: /* Data Write Ack */

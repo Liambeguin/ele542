@@ -37,7 +37,6 @@ uint8_t platform_init(void) {
 	adc_init();
 	motors_init();
 	twi_init();
-	sonar_init();
 
 	/* Enable interrupts */
 	sei();
