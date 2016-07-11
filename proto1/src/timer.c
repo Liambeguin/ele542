@@ -1,3 +1,20 @@
+/*
+ * This file is part of Lab1 ELE542
+ *
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ *  As long as you retain this notice you can do whatever you want with this
+ *  stuff. If we meet some day, and you think this stuff is worth it,
+ *  you can buy us a beer in return.
+ *  If you use this at ETS, beware of the shool's policy against copying
+ *  and fraud.
+ *
+ *   Filename : timer.c
+ * Created on : Jul 11, 2016
+ *    Authors : Jeremie Venne <jeremie.k.venne@gmail.com>
+ *              Liam Beguin <liambeguin@gmail.com>
+ *
+ */
+
 #include "inc/platform.h"
 #include "inc/timer.h"
 #include "inc/gpio.h"
@@ -6,16 +23,11 @@
 
 static uint16_t OCR1A_value = 0x0000;
 static uint16_t OCR1B_value = 0x0000;
+uint8_t ovf = 0;
 
-
-void timer1_update_channel_compare(uint16_t ch_a, uint16_t ch_b) {
-	OCR1A_value = ch_a;
-	OCR1B_value = ch_b;
-}
-
-/* Datasheeet: Timer1 detailed on Page 84 */
+/* @brief: Initialise and configure the timer 1 to use 2 PWM */
 void timer1_init(void) {
-
+	/* Datasheeet: Timer1 detailed on Page 84 */
 	/* Timer1 Control Register A P105 */
 	TCCR1A = (1 << COM1A1) | (0 << COM1A0) | (1 << COM1B1) | (0 << COM1B0) | \
 			 (0 << FOC1A)  | (0 << FOC1B)  | (1 << WGM11)  | (0 << WGM10);
@@ -35,8 +47,22 @@ void timer1_init(void) {
 	timer1_update_channel_compare(0, 0);
 }
 
+/*
+ * @brief: Write the 2 PWM channels (channel A and B) to be updated
+ *
+ * @param ch_a: Duty cycle of channel A from 0 to ICR1
+ * @param ch_b: Duty cycle of channel B from 0 to ICR1
+ */
+void timer1_update_channel_compare(uint16_t ch_a, uint16_t ch_b) {
+	OCR1A_value = ch_a;
+	OCR1B_value = ch_b;
+}
 
+/* @brief: Timer 1 overflow interrupt */
 ISR(TIMER1_OVF_vect) {
 	OCR1A = OCR1A_value;
 	OCR1B = OCR1B_value;
+
+	// Used to see if 5ms have passed
+	ovf = 1;
 }

@@ -1,81 +1,61 @@
+/*
+ * This file is part of Lab1 ELE542
+ *
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ *  As long as you retain this notice you can do whatever you want with this
+ *  stuff. If we meet some day, and you think this stuff is worth it,
+ *  you can buy us a beer in return.
+ *  If you use this at ETS, beware of the shool's policy against copying
+ *  and fraud.
+ *
+ *   Filename : adc.c
+ * Created on : Jul 11, 2016
+ *    Authors : Jeremie Venne <jeremie.k.venne@gmail.com>
+ *              Liam Beguin <liambeguin@gmail.com>
+ *
+ */
+
 #include "inc/platform.h"
 #include "inc/gpio.h"
 #include "inc/adc.h"
+
+uint32_t ADC_values[2];
+uint16_t ADC_counts[2];
+uint8_t ADC_channelSelection = 0;
+
+/* @brief: Analog to digital converter initialisation */
+void adc_init(void){
+
+	gpio_set_input(GPIO_PORT_A, GPIO_PIN_0 | GPIO_PIN_1 );
+
+	ADMUX  = 0x00;
+	ADCSRA = (1 << ADEN) | (1 << ADSC) | (1 << ADATE) | (1 << ADIF) | (1 << ADIE) | \
+			 (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+}
+
 /*
- * Datasheet page 199
+ * @brief: Perform an average of the 2 global ADC values 
+ * @param ADC1_value: A pointer to an ADC value to be store
+ * @param ADC0_value: A pointer to an ADC value to be store
  */
+void adc_read(uint16_t* ADC1_value, uint16_t* ADC0_value){
+	ADCSRA &= ~(1 << ADIE); //Disable Interrupt
 
-uint8_t n_acquisitions = 0;
-uint8_t ready = false;
+	*ADC1_value = ADC_values[1] / ADC_counts[1];
+	ADC_values[1] = 0;
+	ADC_counts[1] = 0;
 
-/* used to accumulate ADC measure */
-uint16_t acc_D = 0, acc_G = 0;
-/* used as the actual value */
-float avg_D = 0, avg_G = 0;
+	*ADC0_value = ADC_values[0] / ADC_counts[0];
+	ADC_values[0] = 0;
+	ADC_counts[0] = 0;
 
-
-uint8_t adc_init(void) {
-
-	/* Set pins */
-	gpio_set_input(GPIO_PORT_A, GPIO_PIN_0 | GPIO_PIN_1);
-	gpio_pin_clear(GPIO_PORT_A, GPIO_PIN_0 | GPIO_PIN_1);
-
-	/* Disable analog comp */
-	/* ACSR = ( 1 << ACD); */
-	/* AREF, turn off internat Vref */
-	ADMUX   = 0x00;
-	ADCSRA  = (1 << ADEN) | (1 << ADSC) | (1 << ADATE) | (1 << ADIE);
-	/* Setting prescaler to 128 */
-	ADCSRA |= 0x07;
-	/* Setting FreeRunning mode */
-	SFIOR   = 0x00;
-
-	/* This is used to indicate if an averaged value is available */
-	ready = false;
-
-	return EXIT_SUCCESS;
+	ADCSRA |= (1 << ADIE); //Enable Interrupt
 }
 
-uint8_t adc_ready(void) {
-	return ready;
-}
-
-void adc_new_measure(void) {
-	n_acquisitions = 0;
-	acc_G = 0;
-	acc_D = 0;
-	ready = false;
-}
-
-
-void adc_get_averaged_values(float *Vg, float *Vd) {
-	while(!ready);
-	*Vg = avg_G;
-	*Vd = acc_D;
-	adc_new_measure();
-}
-
-ISR(ADC_vect) {
-	if (n_acquisitions < MAX_ACQUISITIONS) {
-		/* If MOTEUR_D */
-		if (ADMUX) {
-			/* add to left motor because of delay */
-			acc_G += ADC;
-			n_acquisitions++;
-		} else {
-			acc_D += ADC;
-			n_acquisitions++;
-		}
-		/* Switch channel */
-		ADMUX ^= 0x01;
-	} else {
-		/* Conversion ready */
-		ready = true;
-		n_acquisitions = 0;
-
-		/* calc average */
-		avg_G = (acc_G << 1) / MAX_ACQUISITIONS;
-		avg_D = (acc_D << 1) / MAX_ACQUISITIONS;
-	}
-
+/* @brief: ADC end of conversion interrupt */
+ISR(ADC_vect){
+	ADC_values[ADC_channelSelection & 1] += ADC;
+	ADC_counts[ADC_channelSelection & 1] ++;
+	ADC_channelSelection ^= 0x01;
+	ADMUX = ADC_channelSelection;
 }

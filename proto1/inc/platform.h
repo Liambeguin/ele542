@@ -1,3 +1,20 @@
+/*
+ * This file is part of Lab1 ELE542
+ *
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ *  As long as you retain this notice you can do whatever you want with this
+ *  stuff. If we meet some day, and you think this stuff is worth it,
+ *  you can buy us a beer in return.
+ *  If you use this at ETS, beware of the shool's policy against copying
+ *  and fraud.
+ *
+ *   Filename : platform.h
+ * Created on : Jul 11, 2016
+ *    Authors : Jeremie Venne <jeremie.k.venne@gmail.com>
+ *              Liam Beguin <liambeguin@gmail.com>
+ *
+ */
+
 #ifndef PLATFORM_H_
 #define PLATFORM_H_
 /*
@@ -9,9 +26,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <util/delay.h>
 
 /* Global definitions */
 #define EXIT_SUCCESS 0
@@ -55,22 +72,39 @@
 #define MOTEUR_G 0
 #define MOTEUR_D 1
 
-#define LOG_LEVEL 1
+/* Used to avoid warning when parameter are unused */
+#define UNUSED(x) (void)(x)
+
+#define Pi      (3.1415926535897932384626433832795)
+
+#define LOG_LEVEL 2
 #if (LOG_LEVEL == 1)
-	#define DEBUG(...) \
+	#define DEBUG(f_, ...) \
 	do{ printf(" * in %s() : ",__FUNCTION__); \
-		printf(__VA_ARGS__); printf("\n");} while(0);
+		printf((f_), ##__VA_ARGS__); printf("\r\n");} while(0);
+#elif (LOG_LEVEL == 2)
+	#define DEBUG(f_, ...) \
+	do{ uart_send_byte(0xFE); printf((f_), ##__VA_ARGS__); \
+		uart_send_byte(0xFF);} while (0);
 #else
-	#define DEBUG(...) (void)(__VA_ARGS__)
+	#define DEBUG(f_, ...) {}
 #endif
 
+enum {
+	ROBOT_IDLE = 0,
+	ROBOT_HOT  = 1,
+};
+ 
+
 /* prototypes */
-uint8_t platform_init(void);
+void platform_init(void);
 
 void leds_on(uint8_t leds);
 void leds_off(uint8_t leds);
 void leds_toggle(uint8_t leds);
 
+/* helper functions */
+void ftoa(float num, char *buffer, uint8_t size);
 
 #endif /* _PLATFORM_H_ */
 /* vim: set cc=80 : */

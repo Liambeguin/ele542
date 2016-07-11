@@ -1,3 +1,5 @@
+echo_header() {
+	cat << EOF
 /*
  * This file is part of Lab1 ELE542
  *
@@ -8,36 +10,31 @@
  *  If you use this at ETS, beware of the shool's policy against copying
  *  and fraud.
  *
- *   Filename : circular_buff.h
+ *   Filename : %%FILENAME%%
  * Created on : Jul 11, 2016
  *    Authors : Jeremie Venne <jeremie.k.venne@gmail.com>
  *              Liam Beguin <liambeguin@gmail.com>
  *
  */
 
-#ifndef CIRCULAR_BUFF_H_
-#define CIRCULAR_BUFF_H_
+EOF
+}
 
-#include <stdbool.h>
-#include <stdint.h>
+do_add_header() {
+	file="$(basename $1)"
+	echo -- $file
+	if grep -q BEER $1 ; then
+		echo --- already processed
+	else
+		echo_header > tmp
+		cp $1 $1.tmp
+		cat tmp $1.tmp > $1
+		sed -i "s/%%FILENAME%%/"$file"/" $1
+		rm $1.tmp tmp
+	fi
+}
 
-#define CB_MAX_SIZE 60
+for i in $(find -type f -name '*.[ch]'); do
+	do_add_header $i
+done
 
-typedef struct {
-	uint8_t size;
-	uint8_t head;
-	uint8_t tail;
-
-	bool	isFull;
-	bool	isEmpty;
-
-	uint8_t buffer[CB_MAX_SIZE];
-
-}circular_buff_t;
-
-
-circular_buff_t cb_init(void);
-void cb_write(circular_buff_t *cb, uint8_t *elt);
-void cb_read(circular_buff_t *cb, uint8_t *elt);
-
-#endif /* CIRCULAR_BUFF_H_ */

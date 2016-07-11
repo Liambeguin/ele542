@@ -1,3 +1,20 @@
+/*
+ * This file is part of Lab1 ELE542
+ *
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ *  As long as you retain this notice you can do whatever you want with this
+ *  stuff. If we meet some day, and you think this stuff is worth it,
+ *  you can buy us a beer in return.
+ *  If you use this at ETS, beware of the shool's policy against copying
+ *  and fraud.
+ *
+ *   Filename : motors.h
+ * Created on : Jul 11, 2016
+ *    Authors : Jeremie Venne <jeremie.k.venne@gmail.com>
+ *              Liam Beguin <liambeguin@gmail.com>
+ *
+ */
+
 #ifndef _MOTORS_H
 #define _MOTORS_H
 
@@ -27,19 +44,13 @@ typedef enum {
 	FREIN,
 } motor_dir_t;
 
-typedef struct {
-	float Vmax_p;
-	float Vzero_p;
-	float Vzero_m;
-	float Vmax_m;
-} motor_t;
-
 void CalculPWM(float Vitesse_D, float Angle_D, float Vg, float Vd, \
 		float *Duty_G, float *Duty_D);
 
 void motors_init(void);
 uint8_t motors_calibration(void);
 void motor_set_direction(motor_dir_t dir_D, motor_dir_t dir_G);
+void motors_update(float duty_g, float duty_d);
 
 
 
