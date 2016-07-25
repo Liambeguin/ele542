@@ -14,10 +14,11 @@
  *              Liam Beguin <liambeguin@gmail.com>
  *
  */
-#include <includes.h>
-#include "platform.h"
-#include "gpio.h"
-#include "twi.h"
+#include "inc/includes.h"
+#include "inc/platform.h"
+#include "inc/gpio.h"
+#include "inc/twi.h"
+#include "inc/uart.h"
 /*
  * Datasheet page 167
  */

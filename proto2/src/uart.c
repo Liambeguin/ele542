@@ -14,11 +14,11 @@
  *              Liam Beguin <liambeguin@gmail.com>
  *
  */
-#include <includes.h>
-#include "platform.h"
-#include "gpio.h"
-#include "uart.h"
-#include "avr/wdt.h"
+#include "inc/includes.h"
+#include "inc/platform.h"
+#include "inc/gpio.h"
+#include "inc/uart.h"
+#include "inc/avr/wdt.h"
 
 
 /* uart globals */
@@ -27,7 +27,6 @@ uint8_t uart_counter;
 uint8_t RX_data[3];
 uint8_t echoData[3];
 uint8_t RX_dataIndex = 0;
-uint8_t RXcompleteFlag = 0;
 
 extern OS_EVENT	*UARTRx_Sem;
 
@@ -77,19 +76,19 @@ int uart_putc(char character, FILE *stream) {
 	while (!(UCSRA &  (1<<UDRE)) );
 	UDR = character;
 	return 0;
-} 
+}
 
 /* @brief: send a single byte to the uart */
-void uart_send_byte(uint8_t data) { 
+void uart_send_byte(uint8_t data) {
 	while (!(UCSRA &  (1<<UDRE)) );
 	UDR = data;
-} 
+}
 
 /* @brief: send buffer <buf> to uart */
 void uart_send(char *buf, uint8_t size) {
 	if (!uart_counter) {
 		/* write first byte to data buffer */
-		uart_data_ptr = buf;          
+		uart_data_ptr = buf;
 		uart_counter  = size;
 		UDR = *buf;
 	}
@@ -122,14 +121,12 @@ ISR (USART_RXC_vect, ISR_NAKED) {
 		RX_dataIndex = 0;
 		RX_data[0]   = UDR_data;
 		RX_dataIndex++;
-		//leds_toggle(LED_CMD_RECV);
 		if (UDR_data == 0xF1 || UDR_data == 0xF0)
 			wdt_reset();
    	} else {
    		RX_data[RX_dataIndex] = UDR_data;
 		RX_dataIndex++;
 		if(RX_dataIndex == 3) {
-			//RXcompleteFlag = 1;
 			leds_toggle(LED_CMD_RECV);
 			RX_dataIndex = 0;
 			OSSemPost(UARTRx_Sem);

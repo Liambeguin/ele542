@@ -77,7 +77,6 @@
 
 #define Pi      (3.1415926535897932384626433832795)
 
-#define LOG_LEVEL 2
 #if (LOG_LEVEL == 1)
 	#define DEBUG(f_, ...) \
 	do{ printf(" * in %s() : ",__FUNCTION__); \

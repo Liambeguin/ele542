@@ -24,6 +24,7 @@ void uart_init(uint8_t baudrate);
 int  uart_putc(char character, FILE *stream);
 void uart_send_byte(uint8_t data);
 void uart_send(char *buf, uint8_t size);
+void uart_echo(void);
 
 float uart_get_speed(void);
 uint8_t uart_get_raw_speed(void);
