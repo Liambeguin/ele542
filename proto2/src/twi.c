@@ -14,10 +14,10 @@
  *              Liam Beguin <liambeguin@gmail.com>
  *
  */
-
-#include "inc/platform.h"
-#include "inc/gpio.h"
-#include "inc/twi.h"
+#include <includes.h>
+#include "platform.h"
+#include "gpio.h"
+#include "twi.h"
 /*
  * Datasheet page 167
  */
@@ -126,14 +126,18 @@ void sonar_avoid_obstacles(uint16_t obstacle_g, uint16_t obstacle_d, float *delt
 	//DEBUG("OBSTACLES: %d %d - %d %d", obstacle_g, obstacle_d, delta_right, delta_left);
 }
 
+extern OS_EVENT	*TWI_Transfer_Sem;
 
 /* @brief: convenience functions */
 uint8_t twi_ready(void) {
 	return _ready;
 }
 void twi_wait(void) {
-	while(!_ready);
+	//while(!_ready);
+	INT8U	err;
+	OSSemPend(TWI_Transfer_Sem, 0, &err);
 }
+
 void twi_transfer_start(void) {
 	TWCR = (1 << TWINT) | (1 << TWSTA) | (0 << TWSTO) | (1 << TWEN) | (1 << TWIE);
 	_ready = false;
@@ -144,6 +148,7 @@ void twi_transfer_continue(void) {
 void twi_transfer_stop(void) {
 	TWCR = (1 << TWINT) | (0 << TWSTA) | (1 << TWSTO) | (1 << TWEN) | (1 << TWIE);
 	_ready = true;
+	OSSemPost(TWI_Transfer_Sem);
 }
 
 /* @brief: read a given register over twi */
@@ -163,13 +168,13 @@ void twi_write(uint8_t address, uint8_t reg, uint8_t data) {
 
 		twi_transfer_start();
 	} else {
-		DEBUG("not ready 0x%x 0x%x 0x%x", address, reg, data);
+		//DEBUG("not ready 0x%x 0x%x 0x%x", address, reg, data);
 	}
 	twi_wait();
 }
 
-ISR(TWI_vect) {
-
+ISR(TWI_vect, ISR_NAKED) {
+	OS_INT_ENTER();
 	uint8_t status  = TWSR & 0xF8;
 
 	switch (status) {
@@ -210,4 +215,5 @@ ISR(TWI_vect) {
 			twi_transfer_continue();
 			break;
 	}
+	OS_INT_EXIT();
 }
