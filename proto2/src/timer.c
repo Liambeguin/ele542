@@ -14,16 +14,19 @@
  *              Liam Beguin <liambeguin@gmail.com>
  *
  */
-
-#include "inc/platform.h"
-#include "inc/timer.h"
-#include "inc/gpio.h"
-
-#include "inc/uart.h"
+#include <includes.h>
+#include "platform.h"
+#include "timer.h"
+#include "gpio.h"
+#include "uart.h"
 
 static uint16_t OCR1A_value = 0x0000;
 static uint16_t OCR1B_value = 0x0000;
 uint8_t ovf = 0;
+
+extern OS_EVENT	*TimerOVF_Sem;
+extern OS_EVENT	*Check_eStop_Sem;
+extern OS_EVENT	*ExecuteSonar_Sem;
 
 /* @brief: Initialise and configure the timer 1 to use 2 PWM */
 void timer1_init(void) {
@@ -58,11 +61,28 @@ void timer1_update_channel_compare(uint16_t ch_a, uint16_t ch_b) {
 	OCR1B_value = ch_b;
 }
 
+uint8_t OVF_counter_1 = 0;
+uint8_t OVF_counter_2 = 0;
 /* @brief: Timer 1 overflow interrupt */
-ISR(TIMER1_OVF_vect) {
+ISR(TIMER1_OVF_vect, ISR_NAKED) {
+	OS_INT_ENTER();
 	OCR1A = OCR1A_value;
 	OCR1B = OCR1B_value;
 
 	// Used to see if 5ms have passed
 	ovf = 1;
+	OSSemPost(TimerOVF_Sem);
+	
+	if(OVF_counter_1 == 5){
+		OSSemPost(Check_eStop_Sem);
+		OVF_counter_1 = 0;
+	}
+	OVF_counter_1++;
+	if(OVF_counter_2 == 10){
+		OSSemPost(ExecuteSonar_Sem);
+		OVF_counter_2 = 0;
+	}
+	OVF_counter_2++;
+	
+	OS_INT_EXIT();
 }
