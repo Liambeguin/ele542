@@ -14,11 +14,12 @@
  *              Liam Beguin <liambeguin@gmail.com>
  *
  */
-
-#include "inc/platform.h"
-#include "inc/gpio.h"
-#include "inc/uart.h"
+#include <includes.h>
+#include "platform.h"
+#include "gpio.h"
+#include "uart.h"
 #include "avr/wdt.h"
+
 
 /* uart globals */
 char *uart_data_ptr;
@@ -27,6 +28,8 @@ uint8_t RX_data[3];
 uint8_t echoData[3];
 uint8_t RX_dataIndex = 0;
 uint8_t RXcompleteFlag = 0;
+
+extern OS_EVENT	*UARTRx_Sem;
 
 /* @brief: initialize uart */
 void uart_init(uint8_t baudrate) {
@@ -46,10 +49,7 @@ void uart_init(uint8_t baudrate) {
 
 /* @return desired 'teleguidage' speed [-1, 1] */
 float uart_get_speed(void) {
-	if (RX_data[1] == 0)
-		return 0.0;
-	else
-		return (((float)RX_data[1] - 100.0) / 100.0);
+	return (((float)RX_data[1] - 100.0) / 100.0);
 }
 
 /* @return desired 'teleguidage' speed [0, 200] */
@@ -105,29 +105,35 @@ void uart_echo(void) {
 }
 
 /* Interrupt when transmission is complete */
-ISR(USART_TXC_vect) {
+ISR (USART_TXC_vect, ISR_NAKED) {
+	OS_INT_ENTER();
 	uart_data_ptr++;
 	if (--uart_counter)
 		/* write byte to data buffer */
 		UDR = *uart_data_ptr;
+	OS_INT_EXIT();
 }
 
 /* signal handler for receive complete interrupt */
-ISR(USART_RXC_vect) {
+ISR (USART_RXC_vect, ISR_NAKED) {
+	OS_INT_ENTER();
 	uint8_t UDR_data = UDR;
    	if (UDR_data == 0xF1 || UDR_data == 0xF0 || RX_dataIndex == 0) {
 		RX_dataIndex = 0;
 		RX_data[0]   = UDR_data;
 		RX_dataIndex++;
-		leds_toggle(LED_CMD_RECV);
+		//leds_toggle(LED_CMD_RECV);
 		if (UDR_data == 0xF1 || UDR_data == 0xF0)
 			wdt_reset();
    	} else {
    		RX_data[RX_dataIndex] = UDR_data;
 		RX_dataIndex++;
 		if(RX_dataIndex == 3) {
-			RXcompleteFlag = 1;
+			//RXcompleteFlag = 1;
+			leds_toggle(LED_CMD_RECV);
 			RX_dataIndex = 0;
+			OSSemPost(UARTRx_Sem);
 		}
 	}
+	OS_INT_EXIT();
 }
